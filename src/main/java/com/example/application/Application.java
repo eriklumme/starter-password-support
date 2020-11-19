@@ -11,7 +11,7 @@ import org.vaadin.artur.helpers.LaunchUtil;
 /**
  * The entry point of the Spring Boot application.
  *
- * Use the  * and some desktop browsers.
+ * Use the * and some desktop browsers.
  *
  */
 @SpringBootApplication

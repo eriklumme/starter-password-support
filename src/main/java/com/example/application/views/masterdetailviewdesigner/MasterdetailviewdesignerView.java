@@ -54,7 +54,7 @@ public class MasterdetailviewdesignerView extends PolymerTemplate<TemplateModel>
     // class to the constructor
     private Grid<User> grid = new Grid<>(User.class, false);
 
-        @Id
+    @Id
     private Upload profilePicture;
     @Id
     private Image profilePicturePreview;
@@ -62,7 +62,6 @@ public class MasterdetailviewdesignerView extends PolymerTemplate<TemplateModel>
     private TextField email;
     @Id
     private PasswordField password;
-
 
     @Id
     private Button cancel;
@@ -76,10 +75,13 @@ public class MasterdetailviewdesignerView extends PolymerTemplate<TemplateModel>
     public MasterdetailviewdesignerView(@Autowired UserService userService) {
         setId("masterdetailviewdesigner-view");
 
-        TemplateRenderer<User> profilePictureRenderer = TemplateRenderer.<User>of("<span style='border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; width: 64px; height: 64px'><img style='max-width: 100%' src='[[item.profilePicture]]' /></span>").withProperty("profilePicture", User::getProfilePicture);
-grid.addColumn(profilePictureRenderer).setHeader("Profile Picture").setWidth("96px").setFlexGrow(0);
+        TemplateRenderer<User> profilePictureRenderer = TemplateRenderer.<User>of(
+                "<span style='border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; width: 64px; height: 64px'><img style='max-width: 100%' src='[[item.profilePicture]]' /></span>")
+                .withProperty("profilePicture", User::getProfilePicture);
+        grid.addColumn(profilePictureRenderer).setHeader("Profile Picture").setWidth("96px").setFlexGrow(0);
 
-grid.addColumn("email").setAutoWidth(true);grid.addColumn("password").setAutoWidth(true);
+        grid.addColumn("email").setAutoWidth(true);
+        grid.addColumn("password").setAutoWidth(true);
         grid.setDataProvider(new CrudServiceDataProvider<User, Void>(userService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.setHeightFull();
@@ -106,10 +108,10 @@ grid.addColumn("email").setAutoWidth(true);grid.addColumn("password").setAutoWid
         binder = new Binder<>(User.class);
 
         // Bind fields. This where you'd define e.g. validation rules
-        
+
         binder.bindInstanceFields(this);
 
-            attachImageUpload(profilePicture, profilePicturePreview);
+        attachImageUpload(profilePicture, profilePicturePreview);
 
         cancel.addClickListener(e -> {
             clearForm();
@@ -135,23 +137,22 @@ grid.addColumn("email").setAutoWidth(true);grid.addColumn("password").setAutoWid
     }
 
     private void attachImageUpload(Upload upload, Image preview) {
-    ByteArrayOutputStream uploadBuffer = new ByteArrayOutputStream();
+        ByteArrayOutputStream uploadBuffer = new ByteArrayOutputStream();
 
-    upload.setAcceptedFileTypes("image/*");
-    upload.setReceiver((fileName, mimeType) -> {
-        return uploadBuffer;
-    });
-    upload.addSucceededListener(e -> {
-        String mimeType = e.getMIMEType();
-        String base64ImageData = Base64.getEncoder().encodeToString(uploadBuffer.toByteArray());
-        String dataUrl = "data:" + mimeType + ";base64,"
-                + UriUtils.encodeQuery(base64ImageData, StandardCharsets.UTF_8);
-        upload.getElement().setPropertyJson("files", Json.createArray());
-        preview.setSrc(dataUrl);
-        uploadBuffer.reset();
-    });
-}
-
+        upload.setAcceptedFileTypes("image/*");
+        upload.setReceiver((fileName, mimeType) -> {
+            return uploadBuffer;
+        });
+        upload.addSucceededListener(e -> {
+            String mimeType = e.getMIMEType();
+            String base64ImageData = Base64.getEncoder().encodeToString(uploadBuffer.toByteArray());
+            String dataUrl = "data:" + mimeType + ";base64,"
+                    + UriUtils.encodeQuery(base64ImageData, StandardCharsets.UTF_8);
+            upload.getElement().setPropertyJson("files", Json.createArray());
+            preview.setSrc(dataUrl);
+            uploadBuffer.reset();
+        });
+    }
 
     private void refreshGrid() {
         grid.select(null);
@@ -166,10 +167,10 @@ grid.addColumn("email").setAutoWidth(true);grid.addColumn("password").setAutoWid
         this.user = value;
         binder.readBean(this.user);
         if (value == null) {
-    this.profilePicturePreview.setSrc("");
-} else {
-    this.profilePicturePreview.setSrc(value.getProfilePicture());
-}
+            this.profilePicturePreview.setSrc("");
+        } else {
+            this.profilePicturePreview.setSrc(value.getProfilePicture());
+        }
 
     }
 }

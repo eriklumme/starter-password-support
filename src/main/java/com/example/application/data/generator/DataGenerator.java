@@ -5,7 +5,6 @@ import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.example.application.data.service.UserRepository;
 import com.example.application.data.entity.User;
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -35,8 +34,6 @@ public class DataGenerator {
             userRepositoryGenerator.setData(User::setEmail, DataType.EMAIL);
             userRepositoryGenerator.setData(User::setPassword, DataType.TWO_WORDS);
             userRepository.saveAll(userRepositoryGenerator.create(100, seed));
-
-
 
             logger.info("Generated demo data");
         };
