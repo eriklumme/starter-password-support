@@ -21,6 +21,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.data.binder.Binder;
@@ -47,7 +48,7 @@ public class MasterdetailviewjavaView extends Div {
     private Upload profilePicture;
     private Image profilePicturePreview;
     private TextField email;
-    private PasswordField password;
+    private PasswordField newPassword;
 
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
@@ -74,7 +75,7 @@ public class MasterdetailviewjavaView extends Div {
         grid.addColumn(profilePictureRenderer).setHeader("Profile Picture").setWidth("96px").setFlexGrow(0);
 
         grid.addColumn("email").setAutoWidth(true);
-        grid.addColumn("password").setAutoWidth(true);
+        grid.addColumn("newPassword").setAutoWidth(true);
         grid.setDataProvider(new CrudServiceDataProvider<User, Void>(userService));
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.setHeightFull();
@@ -139,12 +140,12 @@ public class MasterdetailviewjavaView extends Div {
         Label profilePictureLabel = new Label("Profile Picture");
         profilePicturePreview = new Image();
         profilePicturePreview.addClassName("full-width");
-        ByteArrayOutputStream profilePictureBuffer = new ByteArrayOutputStream();
         profilePicture = new Upload();
         profilePicture.getElement().appendChild(profilePicturePreview.getElement());
         email = new TextField("Email");
-        password = new PasswordField("Password");
-        Component[] fields = new Component[] { profilePictureLabel, profilePicture, email, password };
+        newPassword = new PasswordField("New password");
+        newPassword.setHelperText("Leave empty to keep current password");
+        Component[] fields = new Component[] { profilePictureLabel, profilePicture, email, newPassword };
 
         for (Component field : fields) {
             ((HasStyle) field).addClassName("full-width");

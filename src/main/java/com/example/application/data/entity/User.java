@@ -2,9 +2,11 @@ package com.example.application.data.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.Lob;
-import java.time.LocalDate;
-import com.example.application.data.AbstractEntity;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
+
+import com.example.application.data.AbstractEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class User extends AbstractEntity {
@@ -12,7 +14,10 @@ public class User extends AbstractEntity {
   private String profilePicture;
   @Email
   private String email;
-  private Password password;
+  @JsonIgnore
+  private String passwordHash;
+  @Transient
+  private String newPassword;
 
   @Lob
   public String getProfilePicture() {
@@ -31,12 +36,19 @@ public class User extends AbstractEntity {
     this.email = email;
   }
 
-  public Password getPassword() {
-    return password;
+  public String getPasswordHash() {
+    return passwordHash;
   }
 
-  public void setPassword(Password password) {
-    this.password = password;
+  public void setPasswordHash(String passwordHash) {
+    this.passwordHash = passwordHash;
   }
 
+  public String getNewPassword() {
+    return newPassword;
+  }
+
+  public void setNewPassword(String newPassword) {
+    this.newPassword = newPassword;
+  }
 }
