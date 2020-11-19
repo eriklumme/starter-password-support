@@ -1,11 +1,6 @@
 package com.example.application.views.masterdetailviewjava;
 
-import java.io.ByteArrayOutputStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.Optional;
-
-import com.example.application.data.entity.User;
+import com.example.application.data.dto.UserDTO;
 import com.example.application.data.service.UserService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasStyle;
@@ -30,12 +25,14 @@ import com.vaadin.flow.data.renderer.TemplateRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-
+import elemental.json.Json;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.util.UriUtils;
-import org.vaadin.artur.helpers.CrudServiceDataProvider;
 
-import elemental.json.Json;
+import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
+import java.util.Optional;
 
 @Route(value = "master-detail-view-java")
 @PageTitle("master-detail-view-java")
@@ -43,7 +40,7 @@ import elemental.json.Json;
 @RouteAlias(value = "")
 public class MasterdetailviewjavaView extends Div {
 
-    private Grid<User> grid = new Grid<>(User.class, false);
+    private Grid<UserDTO> grid = new Grid<>(UserDTO.class, false);
 
     private Upload profilePicture;
     private Image profilePicturePreview;
@@ -53,9 +50,9 @@ public class MasterdetailviewjavaView extends Div {
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
 
-    private Binder<User> binder;
+    private Binder<UserDTO> binder;
 
-    private User user;
+    private UserDTO user;
 
     public MasterdetailviewjavaView(@Autowired UserService userService) {
         setId("masterdetailviewjava-view");
@@ -69,21 +66,22 @@ public class MasterdetailviewjavaView extends Div {
         add(splitLayout);
 
         // Configure Grid
-        TemplateRenderer<User> profilePictureRenderer = TemplateRenderer.<User>of(
+        TemplateRenderer<UserDTO> profilePictureRenderer = TemplateRenderer.<UserDTO>of(
                 "<span style='border-radius: 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; width: 64px; height: 64px'><img style='max-width: 100%' src='[[item.profilePicture]]' /></span>")
-                .withProperty("profilePicture", User::getProfilePicture);
+                .withProperty("profilePicture", UserDTO::getProfilePicture);
         grid.addColumn(profilePictureRenderer).setHeader("Profile Picture").setWidth("96px").setFlexGrow(0);
 
         grid.addColumn("email").setAutoWidth(true);
         grid.addColumn("newPassword").setAutoWidth(true);
-        grid.setDataProvider(new CrudServiceDataProvider<User, Void>(userService));
+        //grid.setDataProvider(new CrudServiceDataProvider<User, Void>(userService));
+        grid.setItems(userService.findUsers());
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
         grid.setHeightFull();
 
         // when a row is selected or deselected, populate form
         grid.asSingleSelect().addValueChangeListener(event -> {
             if (event.getValue() != null) {
-                Optional<User> userFromBackend = userService.get(event.getValue().getId());
+                Optional<UserDTO> userFromBackend = userService.getDto(event.getValue().getId());
                 // when a row is selected but the data is no longer available, refresh grid
                 if (userFromBackend.isPresent()) {
                     populateForm(userFromBackend.get());
@@ -96,7 +94,7 @@ public class MasterdetailviewjavaView extends Div {
         });
 
         // Configure Form
-        binder = new Binder<>(User.class);
+        binder = new Binder<>(UserDTO.class);
 
         // Bind fields. This where you'd define e.g. validation rules
 
@@ -112,7 +110,7 @@ public class MasterdetailviewjavaView extends Div {
         save.addClickListener(e -> {
             try {
                 if (this.user == null) {
-                    this.user = new User();
+                    this.user = new UserDTO();
                 }
                 binder.writeBean(this.user);
                 this.user.setProfilePicture(profilePicturePreview.getSrc());
@@ -203,7 +201,7 @@ public class MasterdetailviewjavaView extends Div {
         populateForm(null);
     }
 
-    private void populateForm(User value) {
+    private void populateForm(UserDTO value) {
         this.user = value;
         binder.readBean(this.user);
         if (value == null) {
